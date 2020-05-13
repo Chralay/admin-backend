@@ -52,4 +52,32 @@ router.get('/del', async(ctx, next)=>{
     }
 })
 
+router.get('/getByName', async (ctx, next) => {
+    const params = ctx.request.query
+    const query = `db.collection('interviewer').where({\"basicInfo.nickName\":\"${params.nickName}\"}).get()`
+    const res = await callCloudDB(ctx, 'databasequery', query)
+    console.log(res)
+    let returnData = []
+    if (res.data.length != 0) {
+        // 能找到对应的招聘者
+        let obj = JSON.parse(res.data[0])
+        let fileList = [{
+            fileid: obj.basicInfo.avatarUrl,
+            max_age: 7200
+        }]
+        const dlRes = await callCloudStorage.download(ctx, fileList)
+        let dlList = dlRes.file_list
+        obj.basicInfo.avatarUrl = dlList[0].download_url
+        returnData.push({
+            ...obj.basicInfo,
+            _id: obj._id,
+            _openid: obj._openid
+        })
+    }
+    ctx.body = {
+        code: 20000,
+        data: returnData
+    }
+})
+
 module.exports = router
