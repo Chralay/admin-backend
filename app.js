@@ -25,7 +25,10 @@ app.use(async (ctx, next) =>{
 })
 
 const applicant = require('./controller/applicant.js')
+const interviewer = require('./controller/interviewer.js')
+
 router.use('/applicant', applicant.routes())
+router.use('/interviewer', interviewer.routes())
 
 app.use(router.routes())
 app.use(router.allowedMethods())

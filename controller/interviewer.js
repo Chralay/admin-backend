@@ -8,12 +8,12 @@ router.get('/list', async (ctx, next) => {
     const query = ctx.request.query
     const res = await callCloudFn(ctx, 'user', {
         $url: 'getAllInfo',
-        dbname: 'applicant',
+        dbname: 'interviewer',
         start: parseInt(query.start),
         count: parseInt(query.count)
     })
     let data = []
-    if (res.resp_data) {        
+    if (res.resp_data) {
         data = JSON.parse(res.resp_data).data
         // 图片文件下载链接
         let fileList = []
@@ -40,22 +40,11 @@ router.get('/list', async (ctx, next) => {
             code: 20000
         }
     }
-    
-})
-
-// 这个好像没有用，因为对用户不能修改，只能删除
-router.get('/getById', async (ctx, next) => {
-    const query = `db.collection('applicant').doc('${ctx.request.query.id}').get()`
-    const res = await callCloudDB(ctx, 'databasequery', query)
-    ctx.body = {
-        code: 20000,
-        data: JSON.parse(res.data)
-    }
 })
 
 router.get('/del', async(ctx, next)=>{
     const params = ctx.request.query
-    const query = `db.collection('applicant').doc('${params.id}').remove()`
+    const query = `db.collection('interviewer').doc('${params.id}').remove()`
     const res = await callCloudDB(ctx, 'databasedelete', query)
     ctx.body = {
         code: 20000,
