@@ -122,4 +122,24 @@ router.get('/getJobsByName', async (ctx, next) => {
     }
 })
 
+router.get('/delJob', async (ctx, next) => {
+    const params = ctx.request.query
+    // 删除jobs数据库
+    const query = `db.collection('jobsTry').doc('${params.jobId}').remove()`
+    const res1 = await callCloudDB(ctx, 'databasedelete', query)
+
+    // 删除interview-manage
+    const res2 = await callCloudFn(ctx, 'manage', {
+        $url: 'delInfo',
+        jobId: params.jobId
+    })
+    console.log(res2)
+    
+    // console.log(res)
+    ctx.body = {
+        code: 20000,
+        data: res
+    }
+
+})
 module.exports = router
